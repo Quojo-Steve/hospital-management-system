@@ -7,6 +7,7 @@ import sqlite3
 conn = sqlite3.connect('database.db')
 # cursor to move around the db
 c = conn.cursor()
+ids = []
 # tkinter window
 class Application:
     def __init__(self, master):
@@ -69,6 +70,22 @@ class Application:
         self.submit = Button(self.left, text="Add Participant", width=20, height=2, bg='steelblue', command=self.add_appoinment)
         self.submit.place(x=280, y=340)
 
+        #displaying logs on the right
+        sql2 = "SELECT ID FROM appointments"
+        self.result = c.execute(sql2)
+        for self.row in self.result:
+            self.id = self.row[0]
+            ids.append(self.id)
+
+        #ordering the ids
+        self.new = sorted(ids)
+        self.final_id = self.new[len(ids)-1]
+        self.logs = Label(self.right, text='Logs', font=('Poppins 20 bold'), fg='white', bg='steelblue')
+        self.logs.place(x=0, y=0)
+        self.box = Text(self.right, width=45, height=40)
+        self.box.place(x=20, y=60)
+        self.box.insert(END, "Total Appointments till now: " +str(self.final_id))
+
     #function called when submit button is clicked
     def add_appoinment(self):
         # getting user values
@@ -84,10 +101,12 @@ class Application:
         if self.val1 == '' or self.val2 == '' or self.val3 == '' or self.val4 == '' or self.val5 == '' or self.val6 == '':
             tkinter.messagebox.showinfo('Warning 🤯', "Please fill up all boxes")
         else:
-            sql = "INSERT INTO 'appointments' (name, age, gender, location, scheduled_time, phone) VALUES(?, ?, ?, ?, ?, ?)"
+            sql = "INSERT INTO appointments (name, age, gender, location, scheduled_time, phone) VALUES(?, ?, ?, ?, ?, ?)"
             c.execute(sql, (self.val1, self.val2, self.val3, self.val4, self.val5, self.val6))
             conn.commit()
-            print("sucessfully added")
+            tkinter.messagebox.showinfo('Sucess', "Appointment for " +str(self.val1) +" has been created")
+
+            self.box.insert(END, 'Appointment fixed for '+str(self.val1) +' at '+str(self.val5) )
 
 
 
