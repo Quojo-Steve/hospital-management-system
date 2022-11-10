@@ -80,11 +80,36 @@ class Application:
         self.ent6.place(x=300, y=362)
         self.ent6.insert(END, str(self.phone))
 
-        self.update = Button(self.master, text="Update", width=20, height=2, bg='lightblue')
+        self.update = Button(self.master, text="Update", width=20, height=2, bg='lightblue', command=self.update_db)
         self.update.place(x=400, y=400)
 
+        self.delete = Button(self.master, text="Delete", width=20, height=2, bg='red', command=self.delete_db)
+        self.delete.place(x=150, y=400)
 
+    def update_db(self):
+        self.var1 = self.ent1.get()
+        self.var2 = self.ent2.get()
+        self.var3 = self.ent3.get()
+        self.var4 = self.ent4.get()
+        self.var5 = self.ent5.get()
+        self.var6 = self.ent6.get()
 
+        query = "UPDATE appointments SET name=?, age=?, gender=?, location=?, phone=?, scheduled_time=? WHERE name LIKE ?"
+        c.execute(query, (self.var1, self.var2, self.var3, self.var4, self.var5, self.var6, self.namenet.get(),))
+        conn.commit()
+        tkinter.messagebox.showinfo('Updated', "Sucessfully Updated")
+
+    def delete_db(self):
+        sql2 = "DELETE FROM appointments WHERE name LIKE ?"
+        c.execute(sql2, (self.namenet.get(),))
+        conn.commit()
+        tkinter.messagebox.showinfo("Deleted", "Sucessfully Deleted")
+        self.ent1.destroy()
+        self.ent2.destroy()
+        self.ent3.destroy()
+        self.ent4.destroy()
+        self.ent5.destroy()
+        self.ent6.destroy()
 #creating the object
 root = Tk()
 b = Application(root)
